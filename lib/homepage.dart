@@ -8,8 +8,34 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  final items = List<String>.generate(10, (i) => "Item ${i + 1}");
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Home Page'),
+        backgroundColor: Colors.lightBlue[800],
+        foregroundColor: Colors.pink[100],
+      ),
+      body: ListView.builder(
+        itemCount: items.length,
+        itemBuilder: (context, index) {
+          return Card(
+            child: ListTile(
+              title: Text(items[index]),
+              leading: const Icon(Icons.note),
+              trailing: const Icon(Icons.arrow_forward_ios),
+              onTap: () {
+                // Handle item tap
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Tapped on ${items[index]}')),
+                );
+              },
+            ),
+          );
+        },
+        
+        ),
+    );
   }
 }
