@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'writediary.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -18,6 +17,7 @@ class _HomePageState extends State<HomePage> {
         backgroundColor: Colors.pink[100],
         foregroundColor: Colors.lightBlue[800],
       ),
+      drawer:const NavigationDrawer(),
       body: ListView.builder(
         itemCount: items.length,
         itemBuilder: (context, index) {
@@ -37,17 +37,67 @@ class _HomePageState extends State<HomePage> {
         },
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          const Writediary();
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const Writediary()),
-          );
+        onPressed: () async{
+          await Navigator.pushNamed(context, '/writediary');
+          
         },
-        child: const Icon(Icons.add),
         backgroundColor: Colors.pink[100],
         foregroundColor: Colors.lightBlue[800],
+        child: const Icon(Icons.add),
       ),
     );
   }
+}
+
+class NavigationDrawer extends StatelessWidget {
+  const NavigationDrawer({super.key});
+
+  @override
+  Widget build(BuildContext context) => Drawer(
+    child: SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          buildHeader(context),
+          buildMenuItems(context),
+        ],
+      )
+    ),
+    );
+    Widget buildHeader(BuildContext context) => Container(
+      padding: EdgeInsets.only(
+        top: MediaQuery.of(context).padding.top,
+      ),
+    );
+
+    Widget buildMenuItems(BuildContext context) => Column(
+      children: [
+        ListTile(
+          leading: const Icon(Icons.home_outlined),
+          title: const Text('Home'),
+          onTap: (){},
+        ),
+        const Divider(color: Colors.black),
+        ListTile(
+          leading: const Icon(Icons.book_outlined),
+          title: const Text('Your Diary'),
+          onTap: (){},
+        ),
+        const Divider(color: Colors.black),
+        ListTile(
+          leading: const Icon(Icons.settings),
+          title: const Text('Settings'),
+          onTap: (){},
+        ),
+        const Divider(color: Colors.black),
+        ListTile(
+          leading: const Icon(Icons.logout),
+          title: const Text('Logout'),
+          onTap: () async{
+            await Navigator.pushNamed(context, '/');
+          },
+        ),
+        const Divider(color: Colors.black),
+      ],
+    );
 }
