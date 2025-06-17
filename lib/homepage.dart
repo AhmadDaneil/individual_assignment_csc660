@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'writediary.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -14,8 +15,8 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Home Page'),
-        backgroundColor: Colors.lightBlue[800],
-        foregroundColor: Colors.pink[100],
+        backgroundColor: Colors.pink[100],
+        foregroundColor: Colors.lightBlue[800],
       ),
       body: ListView.builder(
         itemCount: items.length,
@@ -34,8 +35,19 @@ class _HomePageState extends State<HomePage> {
             ),
           );
         },
-        
-        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          const Writediary();
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const Writediary()),
+          );
+        },
+        child: const Icon(Icons.add),
+        backgroundColor: Colors.pink[100],
+        foregroundColor: Colors.lightBlue[800],
+      ),
     );
   }
 }
