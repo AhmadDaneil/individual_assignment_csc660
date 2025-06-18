@@ -64,9 +64,34 @@ class NavigationDrawer extends StatelessWidget {
       )
     ),
     );
-    Widget buildHeader(BuildContext context) => Container(
+    Widget buildHeader(BuildContext context) => Material(
+      color: Colors.pink[100],
+      child: InkWell(
+        onTap: () {},
+        child: Container(
       padding: EdgeInsets.only(
-        top: MediaQuery.of(context).padding.top,
+        top:24 + MediaQuery.of(context).padding.top,
+        bottom: 24,
+      ),
+      child: const Column(
+        children: [
+          CircleAvatar(
+            radius: 52,
+            backgroundImage: NetworkImage(""),
+          ),
+          SizedBox(height: 12,),
+          Text(
+            'Name',
+            style: TextStyle(fontSize: 28,),
+            ),
+          Text(
+            'Email',
+            style: TextStyle(fontSize: 16,),
+          ),
+          
+        ],
+      ),
+      ),
       ),
     );
 
