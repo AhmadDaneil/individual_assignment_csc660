@@ -16,8 +16,28 @@ class _WritediaryState extends State<Writediary> {
         backgroundColor: Colors.pink[100],
         foregroundColor: Colors.lightBlue[800],
       ),
-      body: const Center(
-        child: Text('Diary Entry'),
+      body: const Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Padding(
+            padding: EdgeInsets.symmetric(vertical:30),
+            child: Form(
+              child: Column(
+                children: [
+                  Padding(padding: EdgeInsets.symmetric(vertical: 15),
+                  child: TextField(
+                    decoration: InputDecoration(
+                      labelText:'What happened today?'
+                      
+                    ),
+                  ),                  
+                  )
+                ],
+                ),
+                ),
+          ),
+        ],
       ),
     );
   }

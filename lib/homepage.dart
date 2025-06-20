@@ -119,7 +119,7 @@ final User? user;
         const Divider(color: Colors.black),
         ListTile(
           leading: const Icon(Icons.book_outlined),
-          title: const Text('Your Diary'),
+          title: const Text('About Us'),
           onTap: (){},
         ),
         const Divider(color: Colors.black),
