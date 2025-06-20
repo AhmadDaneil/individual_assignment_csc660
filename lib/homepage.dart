@@ -114,7 +114,6 @@ final User? user;
           leading: const Icon(Icons.home_outlined),
           title: const Text('Home'),
           onTap: () async{
-            await Navigator.pushNamed(context, '/home');
           },
         ),
         const Divider(color: Colors.black),

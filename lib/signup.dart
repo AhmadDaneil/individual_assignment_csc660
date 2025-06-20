@@ -1,46 +1,38 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:individual_assignment/forgot.dart';
-import 'package:individual_assignment/signup.dart';
+import 'package:individual_assignment/verifyemail.dart';
 import 'package:get/get.dart';
 
-class Login extends StatefulWidget {
-  const Login({super.key});
+class Signup extends StatefulWidget {
+  const Signup({super.key});
 
   @override
-  State<Login> createState() => _LoginState();
+  State<Signup> createState() => _SignupState();
 }
 
-class _LoginState extends State<Login> {
+class _SignupState extends State<Signup> {
 
   TextEditingController email=TextEditingController();
   TextEditingController password=TextEditingController();
-
-  bool isloading=false;
-
-  signIn() async {
-    setState(() {
-      isloading=true;
-    });
+  
+  signUp() async {
   try {
-    await FirebaseAuth.instance.signInWithEmailAndPassword(
+    await FirebaseAuth.instance.createUserWithEmailAndPassword(
       email: email.text.trim(),
       password: password.text.trim(),
+      
     );
-  }on FirebaseAuthException catch(e){
-    Get.snackbar("Error", e.code);
-  }catch(e){
-    Get.snackbar("Error", e.toString());
-  }
-  setState(() {
-    isloading=false;
-  });
-}
+    await FirebaseAuth.instance.currentUser!.sendEmailVerification();
 
+    Get.to(() => const Verify());
+  } catch (e) {
+    Get.snackbar('Error', e.toString());
+  }
+}
 
   @override
   Widget build(BuildContext context) {
-    return isloading?const Center(child: CircularProgressIndicator(),): Scaffold(
+    return Scaffold(
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -91,16 +83,12 @@ class _LoginState extends State<Login> {
                   Padding(padding: const EdgeInsets.symmetric(horizontal:35),
                   child: MaterialButton(
                     minWidth: double.infinity,
-                    onPressed:(()=>signIn()),
+                    onPressed:(()=>signUp()),
                     color: Colors.pink[100],
                     textColor: Colors.lightBlue[800],
-                    child: const Text('Login'),
+                    child: const Text('Sign Up'),
                     ),
-                  ),
-                  const SizedBox(height: 30,),
-                  ElevatedButton(onPressed: (()=>Get.to(const Signup())), child: const Text("Register")),
-                  const SizedBox(height: 30,),
-                  ElevatedButton(onPressed: (()=>Get.to(const Forgot())), child: const Text("Forgot Password")),
+                  )
                 ],
               ),
               ),
