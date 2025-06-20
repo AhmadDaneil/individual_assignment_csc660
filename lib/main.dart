@@ -1,18 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:individual_assignment/homepage.dart';
-import 'login.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'homepage.dart';
 import 'writediary.dart';
 import 'navigations/settings.dart';
+import 'wrapper.dart';
 
-void main() {
+void main() async{
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(MaterialApp(
     debugShowCheckedModeBanner: false,
-    initialRoute: '/',
+    home: const Wrapper(),
     routes: {
-      '/': (context) => Login(),
       '/home': (context) => HomePage(),
       '/writediary': (context) => Writediary(),
       '/settings': (context) => Settings(),
+      '/wrapper':(context) => Wrapper(),
     }
   ));
 }

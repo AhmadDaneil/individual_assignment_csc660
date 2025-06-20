@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatefulWidget {
@@ -8,7 +9,15 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+
   final items = List<String>.generate(10, (i) => "Item ${i + 1}");
+
+  final user=FirebaseAuth.instance.currentUser;
+
+  signout()async{
+    await FirebaseAuth.instance.signOut();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -17,7 +26,7 @@ class _HomePageState extends State<HomePage> {
         backgroundColor: Colors.pink[100],
         foregroundColor: Colors.lightBlue[800],
       ),
-      drawer:const NavigationDrawer(),
+      drawer:NavigationDrawer(user: user),
       body: ListView.builder(
         itemCount: items.length,
         itemBuilder: (context, index) {
@@ -50,7 +59,13 @@ class _HomePageState extends State<HomePage> {
 }
 
 class NavigationDrawer extends StatelessWidget {
-  const NavigationDrawer({super.key});
+final User? user;
+
+  const NavigationDrawer({super.key, required this.user});
+
+  Future<void> signout() async {
+  await FirebaseAuth.instance.signOut();
+}
 
   @override
   Widget build(BuildContext context) => Drawer(
@@ -73,20 +88,18 @@ class NavigationDrawer extends StatelessWidget {
         top:24 + MediaQuery.of(context).padding.top,
         bottom: 24,
       ),
-      child: const Column(
+      child: Column(
         children: [
-          CircleAvatar(
+          const CircleAvatar(
             radius: 52,
             backgroundImage: NetworkImage(""),
           ),
-          SizedBox(height: 12,),
-          Text(
-            'Name',
-            style: TextStyle(fontSize: 28,),
+          const SizedBox(height: 12,),
+          Text('${user?.displayName ?? "No name"}',
+            style: const TextStyle(fontSize: 28,),
             ),
-          Text(
-            'Email',
-            style: TextStyle(fontSize: 16,),
+          Text('${user?.email ?? "No email"}',
+            style: const TextStyle(fontSize: 16,),
           ),
           
         ],
@@ -100,7 +113,9 @@ class NavigationDrawer extends StatelessWidget {
         ListTile(
           leading: const Icon(Icons.home_outlined),
           title: const Text('Home'),
-          onTap: (){},
+          onTap: () async{
+            await Navigator.pushNamed(context, '/home');
+          },
         ),
         const Divider(color: Colors.black),
         ListTile(
@@ -112,15 +127,15 @@ class NavigationDrawer extends StatelessWidget {
         ListTile(
           leading: const Icon(Icons.settings),
           title: const Text('Settings'),
-          onTap: (){},
+          onTap: () async{
+            await Navigator.pushNamed(context, '/settings');
+          },
         ),
         const Divider(color: Colors.black),
         ListTile(
           leading: const Icon(Icons.logout),
           title: const Text('Logout'),
-          onTap: () async{
-            await Navigator.pushNamed(context, '/');
-          },
+          onTap: (()=>signout()),
         ),
         const Divider(color: Colors.black),
       ],

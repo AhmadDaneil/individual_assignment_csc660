@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "284802416305",
+    "project_id": "ediary-fb8e6",
+    "storage_bucket": "ediary-fb8e6.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:284802416305:android:a913e1616933ef06a8ac90",
+        "android_client_info": {
+          "package_name": "com.example.individual_assignment"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCyMjl4H9KQLTVqCGkgkermiy_CVU1Twjg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class Login extends StatefulWidget {
@@ -8,6 +9,24 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
+
+  TextEditingController email=TextEditingController();
+  TextEditingController password=TextEditingController();
+
+  signIn() async {
+  try {
+    await FirebaseAuth.instance.signInWithEmailAndPassword(
+      email: email.text.trim(),
+      password: password.text.trim(),
+    );
+  } catch (e) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Login failed: $e')),
+    );
+  }
+}
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -26,6 +45,7 @@ class _LoginState extends State<Login> {
                 children: [
                   Padding(padding: const EdgeInsets.symmetric(vertical: 15),
                   child: TextFormField(
+                    controller: email,
                     keyboardType: TextInputType.emailAddress,
                     decoration: const InputDecoration(
                       labelText: 'Email',
@@ -42,6 +62,7 @@ class _LoginState extends State<Login> {
                   const SizedBox(height: 15),
                   Padding(padding: const EdgeInsets.symmetric(vertical: 15),
                   child: TextFormField(
+                    controller: password,
                     keyboardType: TextInputType.emailAddress,
                     decoration: const InputDecoration(
                       labelText: 'Password',
@@ -59,9 +80,7 @@ class _LoginState extends State<Login> {
                   Padding(padding: const EdgeInsets.symmetric(horizontal:35),
                   child: MaterialButton(
                     minWidth: double.infinity,
-                    onPressed:() async{
-                    await Navigator.pushNamed(context, '/home');
-                    },
+                    onPressed:(()=>signIn()),
                     color: Colors.pink[100],
                     textColor: Colors.lightBlue[800],
                     child: const Text('Login'),
