@@ -69,11 +69,13 @@ class _LoginState extends State<Login> {
                       return value!.isEmpty ? 'Please enter email' : null;
                     },
                   ),
+                  
                   ),
                   const SizedBox(height: 15),
                   Padding(padding: const EdgeInsets.symmetric(vertical: 15),
                   child: TextFormField(
                     controller: password,
+                    obscureText: true,
                     keyboardType: TextInputType.emailAddress,
                     decoration: const InputDecoration(
                       labelText: 'Password',

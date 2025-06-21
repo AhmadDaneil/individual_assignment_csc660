@@ -1,5 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -9,8 +11,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-
-  final items = List<String>.generate(10, (i) => "Item ${i + 1}");
 
   final user=FirebaseAuth.instance.currentUser;
 
@@ -27,24 +27,53 @@ class _HomePageState extends State<HomePage> {
         foregroundColor: Colors.lightBlue[800],
       ),
       drawer:NavigationDrawer(user: user),
-      body: ListView.builder(
-        itemCount: items.length,
-        itemBuilder: (context, index) {
-          return Card(
-            child: ListTile(
-              title: Text(items[index]),
-              leading: const Icon(Icons.note),
-              trailing: const Icon(Icons.arrow_forward_ios),
-              onTap: () {
-                // Handle item tap
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Tapped on ${items[index]}')),
-                );
-              },
-            ),
-          );
-        },
-      ),
+      body: StreamBuilder<QuerySnapshot>(
+  stream: FirebaseFirestore.instance
+      .collection('diary')
+      .where('user_id', isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+      .orderBy('timestamp', descending: true)
+      .snapshots(),
+  builder: (context, snapshot) {
+    if (snapshot.connectionState == ConnectionState.waiting) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+      return const Center(child: Text('No diary entries yet.'));
+    }
+
+    final entries = snapshot.data!.docs;
+
+    return ListView.builder(
+      itemCount: entries.length,
+      itemBuilder: (context, index) {
+        final data = entries[index];
+        final entryText = data['entry'];
+        final emoji = data['emotion'] ?? '📝';
+        final timestamp = data['timestamp'] as Timestamp?;
+        final date = timestamp != null
+            ? DateTime.fromMillisecondsSinceEpoch(timestamp.millisecondsSinceEpoch)
+            : DateTime.now();
+
+        return Card(
+          margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
+          child: ListTile(
+            leading: Text(emoji, style: const TextStyle(fontSize: 28)),
+            title: Text(entryText),
+            subtitle: Text('${date.toLocal().toString().split(' ')[0]}'),
+            trailing: const Icon(Icons.arrow_forward_ios),
+            onTap: () {
+              // Optional: Handle item tap
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('Tapped on entry from ${date.toLocal().toString().split(' ')[0]}')),
+              );
+            },
+          ),
+        );
+      },
+    );
+  },
+),
       floatingActionButton: FloatingActionButton(
         onPressed: () async{
           await Navigator.pushNamed(context, '/writediary');
