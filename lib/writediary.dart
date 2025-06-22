@@ -16,12 +16,8 @@ class _WritediaryState extends State<Writediary> {
   final User? user = FirebaseAuth.instance.currentUser;
 
   String? _selectedEmoji;
-
   List<String> emojis = ['😊', '😢', '😡', '😴', '😐'];
-
-
   
-
   @override
   void dispose() {
     _textController.dispose(); // Avoid memory leaks
@@ -39,13 +35,15 @@ class _WritediaryState extends State<Writediary> {
     try {
       await FirebaseFirestore.instance.collection('diary').add({
         'entry': entry,
-        'timestamp': FieldValue.serverTimestamp(),
+        'timestamp': DateTime.now(), // Always a valid DateTime
         'user_id': user?.uid,
+        'emotion': _selectedEmoji ?? '📝',
       });
       _textController.clear();
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Diary entry saved!')),
+        const SnackBar(content: const Text('Diary entry saved!')),
       );
+      Navigator.pop(context); // to go back to HomePage
       } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error saving entry: $e')),

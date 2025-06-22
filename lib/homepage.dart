@@ -20,6 +20,14 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final String? uid = FirebaseAuth.instance.currentUser?.uid;
+  
+    if (uid == null) {
+      return const Scaffold(
+        body: Center(child: Text('User not logged in')),
+      );
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Home Page'),
@@ -27,33 +35,37 @@ class _HomePageState extends State<HomePage> {
         foregroundColor: Colors.lightBlue[800],
       ),
       drawer:NavigationDrawer(user: user),
+
       body: StreamBuilder<QuerySnapshot>(
-  stream: FirebaseFirestore.instance
-      .collection('diary')
-      .where('user_id', isEqualTo: FirebaseAuth.instance.currentUser!.uid)
-      .orderBy('timestamp', descending: true)
-      .snapshots(),
+        stream: FirebaseFirestore.instance
+          .collection('diary')
+          .where('user_id', isEqualTo: uid)
+          .orderBy('timestamp', descending: true)
+          .snapshots(),
   builder: (context, snapshot) {
+    if (snapshot.hasError) {
+      return Center(child: Text('Error: ${snapshot.error}'));
+    }
+
     if (snapshot.connectionState == ConnectionState.waiting) {
       return const Center(child: CircularProgressIndicator());
     }
 
-    if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-      return const Center(child: Text('No diary entries yet.'));
+    final docs = snapshot.data?.docs ?? [];
+
+    if (docs.isEmpty) {
+      return const Center(child: Text('No diary entries found.'));
     }
 
-    final entries = snapshot.data!.docs;
 
     return ListView.builder(
-      itemCount: entries.length,
+      itemCount: docs.length,
       itemBuilder: (context, index) {
-        final data = entries[index];
+        final data = docs[index];
         final entryText = data['entry'];
         final emoji = data['emotion'] ?? '📝';
         final timestamp = data['timestamp'] as Timestamp?;
-        final date = timestamp != null
-            ? DateTime.fromMillisecondsSinceEpoch(timestamp.millisecondsSinceEpoch)
-            : DateTime.now();
+        final date = timestamp?.toDate() ?? DateTime.now();
 
         return Card(
           margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
@@ -77,6 +89,9 @@ class _HomePageState extends State<HomePage> {
       floatingActionButton: FloatingActionButton(
         onPressed: () async{
           await Navigator.pushNamed(context, '/writediary');
+          setState(() {
+            // Refresh the state to show the new entry
+          });
           
         },
         backgroundColor: Colors.pink[100],

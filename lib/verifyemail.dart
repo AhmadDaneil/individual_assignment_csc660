@@ -35,7 +35,7 @@ class _VerifyState extends State<Verify> {
     await FirebaseAuth.instance.currentUser!.reload();
     final user = FirebaseAuth.instance.currentUser;
     if (user != null && user.emailVerified) {
-      Get.offAll(() => const Wrapper());
+      Get.offAll(() => Wrapper());
     } else {
       Get.snackbar(
         'Not Verified',
@@ -74,7 +74,7 @@ class _VerifyState extends State<Verify> {
       tooltip: 'Cancel and Logout',
       onPressed: () async {
         await FirebaseAuth.instance.signOut();
-        Get.offAll(() => const Wrapper()); // Redirect back to Wrapper/Login
+        Get.offAll(() => Wrapper()); // Redirect back to Wrapper/Login
       },
       child: const Icon(Icons.logout),
     ),
