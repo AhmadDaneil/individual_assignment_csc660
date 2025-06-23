@@ -155,16 +155,19 @@ final User? user;
     Widget buildMenuItems(BuildContext context) => Column(
       children: [
         ListTile(
-          leading: const Icon(Icons.home_outlined),
-          title: const Text('Home'),
+          leading: const Icon(Icons.add_alert_outlined),
+          title: const Text('Reminder'),
           onTap: () async{
+            await Navigator.pushNamed(context, '/reminder');
           },
         ),
         const Divider(color: Colors.black),
         ListTile(
           leading: const Icon(Icons.book_outlined),
           title: const Text('About Us'),
-          onTap: (){},
+          onTap: ()async{
+            await Navigator.pushNamed(context, '/about');
+          },
         ),
         const Divider(color: Colors.black),
         ListTile(
