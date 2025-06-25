@@ -43,6 +43,11 @@ class _WritediaryState extends State<Writediary> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: const Text('Diary entry saved!')),
       );
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        setState(() {
+          _selectedEmoji = null; // Reset emoji selection
+        });
+      });
       Navigator.pop(context); // to go back to HomePage
       } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(

@@ -10,6 +10,13 @@ class Reminder extends StatefulWidget {
 class _ReminderState extends State<Reminder> {
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Reminder'),
+        backgroundColor: Colors.pink[100],
+        foregroundColor: Colors.lightBlue[800],
+      ),
+      
+    );
   }
 }
