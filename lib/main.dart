@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:individual_assignment/navigations/reminder.dart';
+import 'package:individual_assignment/goals/goalcreate.dart';
+import 'package:individual_assignment/goals/goalview.dart';
 import 'homepage.dart';
 import 'writediary.dart';
 import 'package:get/get.dart';
@@ -20,7 +21,8 @@ void main() async{
       '/settings': (context) => Settings(),
       '/wrapper':(context) => const Wrapper(),
       '/about': (context) => const About(),
-      '/reminder':(context) => const Reminder(),
-    }
+      '/goalcreate': (context) => const Goalcreate(),
+      '/goalview': (context) => Goalsview(),
+    },
   ));
 }

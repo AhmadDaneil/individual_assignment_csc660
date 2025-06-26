@@ -11,9 +11,7 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
-
-  final user=FirebaseAuth.instance.currentUser;
+class _HomePageState extends State<HomePage> {  final user=FirebaseAuth.instance.currentUser;
 
   signout()async{
     await FirebaseAuth.instance.signOut();
@@ -270,10 +268,10 @@ final User? user;
     Widget buildMenuItems(BuildContext context) => Column(
       children: [
         ListTile(
-          leading: const Icon(Icons.add_alert_outlined),
-          title: const Text('Reminder'),
+          leading: const Icon(Icons.checklist_outlined),
+          title: const Text('Goals'),
           onTap: () async{
-            await Navigator.pushNamed(context, '/reminder');
+            await Navigator.pushNamed(context, '/goalview');
           },
         ),
         const Divider(color: Colors.black),
