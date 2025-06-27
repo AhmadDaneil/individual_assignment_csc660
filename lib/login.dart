@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:individual_assignment/forgot.dart';
 import 'package:individual_assignment/signup.dart';
 import 'package:get/get.dart';
+import 'package:individual_assignment/loading.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -40,7 +41,7 @@ class _LoginState extends State<Login> {
 
   @override
   Widget build(BuildContext context) {
-    return isloading?const Center(child: CircularProgressIndicator(),): Scaffold(
+    return isloading?const Center(child: Loading(),): Scaffold(
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,

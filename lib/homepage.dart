@@ -6,6 +6,7 @@ import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'dart:convert';
 import 'package:individual_assignment/app_colors.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -95,7 +96,10 @@ class _HomePageState extends State<HomePage> {
           }
 
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
+            return const Center(child: SpinKitSquareCircle(
+              color: Colors.purple,
+              size: 50.0,
+            ));
           }
 
           final docs = snapshot.data?.docs ?? [];
@@ -259,7 +263,8 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
   Widget buildHeader(BuildContext context, String name, String email, ImageProvider imageProvider) => Material(
         color: Colors.pink[100],
         child: InkWell(
-          onTap: () {},
+          onTap: () => _pickAndUploadImage(context),
+          splashColor: Colors.white,
           child: Container(
             padding: EdgeInsets.only(
               top: 24 + MediaQuery.of(context).padding.top,
