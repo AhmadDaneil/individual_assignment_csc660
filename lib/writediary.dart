@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-
+import 'package:provider/provider.dart';
+import 'package:individual_assignment/navigations/settings/settings_provider.dart';
 
 class Writediary extends StatefulWidget {
   const Writediary({super.key});
@@ -11,16 +12,15 @@ class Writediary extends StatefulWidget {
 }
 
 class _WritediaryState extends State<Writediary> {
-
   final _textController = TextEditingController();
   final User? user = FirebaseAuth.instance.currentUser;
 
   String? _selectedEmoji;
   List<String> emojis = ['😊', '😢', '😡', '😴', '😐'];
-  
+
   @override
   void dispose() {
-    _textController.dispose(); // Avoid memory leaks
+    _textController.dispose();
     super.dispose();
   }
 
@@ -32,76 +32,84 @@ class _WritediaryState extends State<Writediary> {
       );
       return;
     }
+
     try {
       await FirebaseFirestore.instance.collection('diary').add({
         'entry': entry,
-        'timestamp': DateTime.now(), // Always a valid DateTime
+        'timestamp': DateTime.now(),
         'user_id': user?.uid,
         'emotion': _selectedEmoji ?? '📝',
       });
       _textController.clear();
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: const Text('Diary entry saved!')),
-      );
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        setState(() {
-          _selectedEmoji = null; // Reset emoji selection
-        });
+      setState(() {
+        _selectedEmoji = null;
       });
-      Navigator.pop(context); // to go back to HomePage
-      } catch (e) {
+      if (context.mounted) Navigator.pop(context);
+    } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error saving entry: $e')),
       );
     }
   }
 
-  
-
   @override
   Widget build(BuildContext context) {
+    final settings = Provider.of<SettingsProvider>(context);
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Write Diary'),
-        backgroundColor: Colors.pink[100],
-        foregroundColor: Colors.lightBlue[800],
+        backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
+        foregroundColor: Theme.of(context).appBarTheme.foregroundColor,
       ),
+      backgroundColor: settings.backgroundColor,
       body: Padding(
         padding: const EdgeInsets.all(30),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const Text(
+            Text(
               'How was your day?',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: isDark ? Colors.white : Colors.black,
+              ),
             ),
             const SizedBox(height: 20),
             Wrap(
               spacing: 10,
               children: emojis.map((emoji) {
                 return ChoiceChip(
-                label: Text(emoji, style: const TextStyle(fontSize: 24)),
-                selected: _selectedEmoji == emoji,
-                onSelected: (_) {
-                setState(() {
-                  _selectedEmoji = emoji;
-                });
-                },
-              );
-               }).toList(),
+                  label: Text(emoji, style: const TextStyle(fontSize: 24)),
+                  selected: _selectedEmoji == emoji,
+                  onSelected: (_) {
+                    setState(() {
+                      _selectedEmoji = emoji;
+                    });
+                  },
+                );
+              }).toList(),
             ),
-
+            const SizedBox(height: 30),
             TextField(
               controller: _textController,
               maxLines: 5,
+              style: TextStyle(color: isDark ? Colors.white : Colors.black),
               decoration: InputDecoration(
                 labelText: 'What happened today?',
+                labelStyle: TextStyle(
+                  fontSize: 18,
+                  color: isDark ? Colors.white70 : Colors.black54,
+                ),
                 border: const OutlineInputBorder(),
+                filled: true,
+                fillColor: isDark ? Colors.grey[800] : Colors.white,
                 suffixIcon: IconButton(
-                  onPressed: () {
-                    _textController.clear();
-                  },
-                  icon: const Icon(Icons.clear),
+                  onPressed: () => _textController.clear(),
+                  icon: Icon(Icons.clear, color: isDark ? Colors.white : Colors.black),
                 ),
               ),
             ),
@@ -109,8 +117,8 @@ class _WritediaryState extends State<Writediary> {
             MaterialButton(
               onPressed: _saveEntry,
               minWidth: double.infinity,
-              color: Colors.pink[100],
-              textColor: Colors.lightBlue[800],
+              color: settings.themeColor,
+              textColor: isDark ? Colors.white : Colors.black,
               child: const Text('Save'),
             ),
           ],
@@ -119,5 +127,3 @@ class _WritediaryState extends State<Writediary> {
     );
   }
 }
-
-

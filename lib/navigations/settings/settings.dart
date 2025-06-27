@@ -1,56 +1,214 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:individual_assignment/navigations/settings/settings_provider.dart';
+import 'package:individual_assignment/app_colors.dart';
 
-class Settings extends StatelessWidget {
 
-  final List<String> settingsOptions = [
-    'Account',
-    'Themes & Appearance',
-    'Privacy Settings',
-    'App Language',
-  ];
+class Settings extends StatefulWidget {
+  const Settings({super.key});
+
+  @override
+  State<Settings> createState() => _SettingsState();
+}
+
+class _SettingsState extends State<Settings> {
+  final user = FirebaseAuth.instance.currentUser;
+  final TextEditingController _nameController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserSettings();
+  }
+
+  void _loadUserSettings() async {
+    final doc = await FirebaseFirestore.instance.collection('users').doc(user?.uid).get();
+    if (doc.exists) {
+      final data = doc.data();
+      if (data != null) {
+        _nameController.text = data['name'] ?? '';
+        Provider.of<SettingsProvider>(context, listen: false).loadFromMap(data);
+      }
+    }
+  }
+
+  Future<void> _saveSettings() async {
+    final settings = Provider.of<SettingsProvider>(context, listen: false);
+    await FirebaseFirestore.instance.collection('users').doc(user?.uid).update({
+      'name': _nameController.text.trim(),
+      ...settings.toMap(),
+    });
+    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Settings saved.')));
+  }
+
   @override
   Widget build(BuildContext context) {
+    final settings = Provider.of<SettingsProvider>(context);
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Settings'),
+        actions: [
+          IconButton(onPressed: _saveSettings, icon: const Icon(Icons.save)),
+        ],
       ),
-      body: ListView.builder(
-        itemCount: settingsOptions.length,
-        itemBuilder: (context, index) {
-          return Container(
-            margin: const EdgeInsets.all(8.0),
-            child: Card(
-              elevation: 3,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-              child: Row(
+      body: ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          Card(
+  color: isDark ? AppColors.darkCard : AppColors.lightCard,
+  child: Padding(
+    padding: const EdgeInsets.all(16),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Account Name',
+          style: TextStyle(
+            fontSize: settings.fontSize,
+            color: isDark ? AppColors.darkText : AppColors.lightText,
+          ),
+        ),
+        TextField(
+          controller: _nameController,
+          style: TextStyle(
+            fontSize: settings.fontSize,
+            color: isDark ? AppColors.darkText : AppColors.lightText,
+          ),
+          decoration: InputDecoration(
+            filled: true,
+            fillColor: isDark ? Colors.grey[700] : Colors.white,
+            border: const OutlineInputBorder(),
+          ),
+        ),
+      ],
+    ),
+  ),
+),
+
+          const SizedBox(height: 24),
+
+          Card(
+            color: isDark ? AppColors.darkCard : AppColors.lightCard,
+            child: SwitchListTile(
+              title: Text('Dark Mode', style: TextStyle(fontSize: settings.fontSize, color: isDark ? Colors.white : Colors.black)),
+              value: settings.isDarkMode,
+              onChanged: settings.updateDarkMode,
+            ),
+          ),
+          const SizedBox(height: 24),
+
+          Card(
+            color: isDark ? Colors.grey[850] : Colors.white,
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Expanded(
-                    child: Container(
-                      padding: const EdgeInsets.all(10),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(settingsOptions[index], 
-                          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                        ],
-                      ),
-                      ),
-                      
-                    ),
-                    const ClipRRect(
-                    borderRadius: BorderRadius.only(
-                      topRight: Radius.circular(10),
-                      bottomRight: Radius.circular(10),
-                    ),
-                    ),
+                  Text('Font Size', style: TextStyle(fontSize: settings.fontSize, color: isDark ? Colors.white : Colors.black)),
+                  Slider(
+                    value: settings.fontSize,
+                    min: 12,
+                    max: 30,
+                    divisions: 6,
+                    label: settings.fontSize.round().toString(),
+                    onChanged: settings.updateFontSize,
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 24),
+
+          Card(
+            color: isDark ? Colors.grey[850] : Colors.white,
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                Text('Background Color', style: TextStyle(fontSize: settings.fontSize, color: isDark ? Colors.white : Colors.black)),
+                Wrap(
+                spacing: 10,
+                children: [
+                _colorBox(settings, Colors.pink),
+                _colorBox(settings, Colors.blue),
+                _colorBox(settings, Colors.teal),
+                _colorBox(settings, Colors.deepPurple),
+                _colorBox(settings, Colors.orange),
                 ],
                 ),
-              ),
-          );
-          
-        },
+              ],
+            ),
+          ),
+        ),
+        const SizedBox(height: 24),
+
+                  Card(
+            color: isDark ? Colors.grey[850] : Colors.white,
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                Text('Appbar Color', style: TextStyle(fontSize: settings.fontSize, color: isDark ? Colors.white : Colors.black)),
+                Wrap(
+                spacing: 10,
+                children: [
+                _colorBox(settings, Colors.pink, isAppBar: true),
+                _colorBox(settings, Colors.blue, isAppBar: true),
+                _colorBox(settings, Colors.teal, isAppBar: true),
+                _colorBox(settings, Colors.deepPurple, isAppBar: true),
+                _colorBox(settings, Colors.orange, isAppBar: true),
+                ],
+                ),
+              ],
+            ),
+          ),
+        ),
+
+        ],
       ),
     );
   }
+
+Widget _colorBox(SettingsProvider settings, Color color, {bool isAppBar = false}) {
+  return GestureDetector(
+    onTap: () {
+      if (isAppBar) {
+        settings.updateAppBarColor(color);
+      } else {
+        settings.updateBackgroundColor(color);
+      }
+    },
+    child: Container(
+      width: 40,
+      height: 40,
+      decoration: BoxDecoration(
+        color: color,
+        border: Border.all(
+          color: isAppBar
+              ? (settings.appBarColor == color ? Colors.black : Colors.grey)
+              : (settings.backgroundColor == color ? Colors.black : Colors.grey),
+        ),
+        borderRadius: BorderRadius.circular(8),
+      ),
+    ),
+  );
+}
+  Widget _themeColorCircle(SettingsProvider settings, MaterialColor color) {
+  return GestureDetector(
+    onTap: () => settings.updateThemeColor(color),
+    child: CircleAvatar(
+      backgroundColor: color,
+      child: settings.themeColor == color
+          ? const Icon(Icons.check, color: Colors.white)
+          : null,
+    ),
+  );
+}
 }

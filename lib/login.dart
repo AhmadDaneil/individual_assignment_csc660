@@ -45,9 +45,10 @@ class _LoginState extends State<Login> {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          const Icon(
-            Icons.book,
-            size: 100,
+          const Image(
+            image: AssetImage('assets/images/eDiary_login.png'),
+            height: 200,
+            width: 200,
             ),
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 30),
@@ -94,8 +95,8 @@ class _LoginState extends State<Login> {
                   child: MaterialButton(
                     minWidth: double.infinity,
                     onPressed:(()=>signIn()),
-                    color: Colors.pink[100],
-                    textColor: Colors.lightBlue[800],
+                    color: Colors.white,
+                    textColor: Colors.black,
                     child: const Text('Login'),
                     ),
                   ),

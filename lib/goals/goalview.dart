@@ -4,6 +4,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'goalcreate.dart';
 
 class Goalsview extends StatefulWidget {
+  const Goalsview({super.key});
+
   @override
   State<Goalsview> createState() => _GoalsviewState();
 }

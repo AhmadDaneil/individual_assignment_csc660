@@ -5,6 +5,7 @@ import 'package:expandable/expandable.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'dart:convert';
+import 'package:individual_assignment/app_colors.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -21,8 +22,8 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _showEditDialog(BuildContext context, String docId, String currentEntry, String currentEmoji) {
-    final TextEditingController _entryController = TextEditingController(text: currentEntry);
-    final TextEditingController _emojiController = TextEditingController(text: currentEmoji);
+    final TextEditingController entryController = TextEditingController(text: currentEntry);
+    final TextEditingController emojiController = TextEditingController(text: currentEmoji);
 
     showDialog(
       context: context,
@@ -33,11 +34,11 @@ class _HomePageState extends State<HomePage> {
             child: Column(
               children: [
                 TextField(
-                  controller: _emojiController,
+                  controller: emojiController,
                   decoration: const InputDecoration(labelText: 'Emoji'),
                 ),
                 TextField(
-                  controller: _entryController,
+                  controller: entryController,
                   maxLines: 4,
                   decoration: const InputDecoration(labelText: 'Entry'),
                 ),
@@ -52,8 +53,8 @@ class _HomePageState extends State<HomePage> {
             ElevatedButton(
               onPressed: () async {
                 await FirebaseFirestore.instance.collection('diary').doc(docId).update({
-                  'entry': _entryController.text.trim(),
-                  'emotion': _emojiController.text.trim(),
+                  'entry': entryController.text.trim(),
+                  'emotion': emojiController.text.trim(),
                 });
                 Navigator.pop(context);
               },
@@ -68,6 +69,8 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     final String? uid = FirebaseAuth.instance.currentUser?.uid;
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
 
     if (uid == null) {
       return const Scaffold(
@@ -78,8 +81,6 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Home Page'),
-        backgroundColor: Colors.pink[100],
-        foregroundColor: Colors.lightBlue[800],
       ),
       drawer: NavigationDrawer(user: user),
       body: StreamBuilder<QuerySnapshot>(
@@ -113,13 +114,17 @@ class _HomePageState extends State<HomePage> {
               final date = timestamp?.toDate() ?? DateTime.now();
 
               return Card(
+                color: isDark ? AppColors.darkCard : AppColors.lightCard,
                 margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
                 child: ExpandablePanel(
                   header: ListTile(
-                    leading: Text(emoji, style: const TextStyle(fontSize: 28)),
+                    leading: Text(emoji, style: TextStyle(fontSize: 28, color: isDark ? AppColors.darkText : AppColors.lightText)),
                     title: Text(
                       '${date.day}/${date.month}/${date.year}',
-                      style: const TextStyle(fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: isDark ? AppColors.darkText : AppColors.lightText,
+                      ),
                     ),
                   ),
                   collapsed: Padding(
@@ -129,6 +134,7 @@ class _HomePageState extends State<HomePage> {
                       softWrap: true,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
+                      style: TextStyle(color: isDark ? AppColors.darkText : AppColors.lightText),
                     ),
                   ),
                   expanded: Padding(
@@ -136,7 +142,7 @@ class _HomePageState extends State<HomePage> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(entryText),
+                        Text(entryText, style: TextStyle(color: isDark ? AppColors.darkText : AppColors.lightText)),
                         const SizedBox(height: 10),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.end,
@@ -158,13 +164,6 @@ class _HomePageState extends State<HomePage> {
                       ],
                     ),
                   ),
-                  theme: const ExpandableThemeData(
-                    hasIcon: true,
-                    iconPlacement: ExpandablePanelIconPlacement.right,
-                    tapHeaderToExpand: true,
-                    tapBodyToCollapse: true,
-                    headerAlignment: ExpandablePanelHeaderAlignment.center,
-                  ),
                 ),
               );
             },
@@ -176,8 +175,8 @@ class _HomePageState extends State<HomePage> {
           await Navigator.pushNamed(context, '/writediary');
           setState(() {});
         },
-        backgroundColor: Colors.pink[100],
-        foregroundColor: Colors.lightBlue[800],
+        backgroundColor: Colors.white,
+        foregroundColor: Colors.black,
         child: const Icon(Icons.add),
       ),
     );
@@ -227,8 +226,8 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
             child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            FutureBuilder<DocumentSnapshot>(
-              future: FirebaseFirestore.instance.collection('users').doc(widget.user?.uid).get(),
+            StreamBuilder<DocumentSnapshot>(
+              stream: FirebaseFirestore.instance.collection('users').doc(widget.user?.uid).snapshots(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const DrawerHeader(

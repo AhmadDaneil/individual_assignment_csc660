@@ -1,28 +1,74 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:individual_assignment/goals/goalcreate.dart';
-import 'package:individual_assignment/goals/goalview.dart';
+import 'package:provider/provider.dart';
+
 import 'homepage.dart';
 import 'writediary.dart';
-import 'package:get/get.dart';
 import 'navigations/settings/settings.dart';
-import 'wrapper.dart';
 import 'navigations/about.dart';
+import 'wrapper.dart';
+import 'goals/goalcreate.dart';
+import 'goals/goalview.dart';
+import 'package:individual_assignment/navigations/settings/settings_provider.dart';
+import 'login.dart';
+import 'forgot.dart';
 
-void main() async{
+
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  runApp(GetMaterialApp(
-    debugShowCheckedModeBanner: false,
-    home: const Wrapper(),
-    routes: {
+
+  runApp(
+    ChangeNotifierProvider(
+      create: (_) => SettingsProvider(),
+      child: const MyApp(),
+    ),
+  );
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+  @override
+  Widget build(BuildContext context) {
+    return Consumer<SettingsProvider>(
+      builder: (context, settings, _) {
+        return MaterialApp(
+  debugShowCheckedModeBanner: false,
+  themeMode: settings.isDarkMode ? ThemeMode.dark : ThemeMode.light,
+  theme: ThemeData(
+  scaffoldBackgroundColor: settings.backgroundColor,
+  appBarTheme: AppBarTheme(
+    backgroundColor: settings.appBarColor,
+    foregroundColor: Colors.white,
+  ),
+  textTheme: Theme.of(context).textTheme.apply(
+    fontSizeFactor: settings.fontSize / 16.0,
+  ),
+),
+darkTheme: ThemeData.dark().copyWith(
+  scaffoldBackgroundColor: settings.backgroundColor,
+  appBarTheme: AppBarTheme(
+    backgroundColor: settings.appBarColor,
+    foregroundColor: settings.isDarkMode ? Colors.white : Colors.black,
+  ),
+  textTheme: Theme.of(context).textTheme.apply(
+    fontSizeFactor: settings.fontSize / 16.0,
+  ),
+),
+      initialRoute: '/wrapper',
+      routes: {
       '/home': (context) => const HomePage(),
+      '/login': (context) => const Login(),
+      '/forgot': (context) => const Forgot(),
       '/writediary': (context) => const Writediary(),
-      '/settings': (context) => Settings(),
+      '/settings': (context) => const Settings(),
       '/wrapper':(context) => const Wrapper(),
       '/about': (context) => const About(),
       '/goalcreate': (context) => const Goalcreate(),
       '/goalview': (context) => Goalsview(),
     },
-  ));
+  );
+  }
+  );
+  }
 }
