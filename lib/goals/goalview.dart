@@ -50,12 +50,33 @@ class _GoalsviewState extends State<Goalsview> {
     child: const Icon(Icons.delete, color: Colors.white),
   ),
   onDismissed: (direction) async {
-    await data.reference.delete();
+  final deletedData = data.data(); // Save deleted goal
+  final docId = data.id;
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Goal "${data['title']}" deleted')),
-    );
-  },
+  await data.reference.delete();
+
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(
+      content: Text('Goal "${data['title']}" deleted'),
+      action: SnackBarAction(
+        label: 'Undo',
+        onPressed: () async {
+          final user = FirebaseAuth.instance.currentUser;
+          if (user != null) {
+            await FirebaseFirestore.instance
+              .collection('users')
+              .doc(user.uid)
+              .collection('goals')
+              .doc(docId)
+              .set(deletedData as Map<String, dynamic>);
+          }
+        },
+      ),
+      duration: const Duration(seconds: 5),
+    ),
+  );
+},
+
   child: ListTile(
     title: Text(
       data['title'],

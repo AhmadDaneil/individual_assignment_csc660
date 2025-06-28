@@ -160,10 +160,24 @@ class _HomePageState extends State<HomePage> {
                             IconButton(
                               icon: const Icon(Icons.delete, color: Colors.red),
                               onPressed: () async {
-                                await FirebaseFirestore.instance.collection('diary').doc(data.id).delete();
+                              final deletedData = data.data(); // Save data
+                              await FirebaseFirestore.instance.collection('diary').doc(data.id).delete();
+
+                              ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                              content: Text('Entry deleted'),
+                              action: SnackBarAction(
+                              label: 'Undo',
+                              onPressed: () async {
+                              await FirebaseFirestore.instance.collection('diary').doc(data.id).set(deletedData as Map<String, dynamic>);
                               },
-                            ),
-                          ],
+                              ),
+                              duration: const Duration(seconds: 5),
+                              ),
+                              );
+                            },
+                          ),
+                        ],
                         ),
                       ],
                     ),
