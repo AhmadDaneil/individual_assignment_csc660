@@ -4,6 +4,7 @@ import 'package:individual_assignment/verifyemail.dart';
 import 'package:get/get.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+
 class Signup extends StatefulWidget {
   const Signup({super.key});
 
@@ -54,22 +55,27 @@ class _SignupState extends State<Signup> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
+      appBar: AppBar(
+  title: const Text("Sign Up"),
+  leading: IconButton(
+    icon: const Icon(Icons.arrow_back),
+    onPressed: () => Get.back(),
+    color: Colors.black, // ⬅️ manual back
+  ),
+  backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+  foregroundColor: Theme.of(context).appBarTheme.foregroundColor,
+),
+
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.symmetric(horizontal: 30),
+        child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          const Icon(
-            Icons.book,
-            size: 100,
-            ),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 30),
-            child: Form(
+          const SizedBox(height: 120),
+          Form(
               child: Column(
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 15),
-                    child: TextFormField(
+                  TextFormField(
                       controller: name,
                       decoration: const InputDecoration(
                         labelText: 'Name',
@@ -81,11 +87,8 @@ class _SignupState extends State<Signup> {
                         return value!.isEmpty ? 'Please enter name' : null;
                       },
                     ),
-                  ),
-                  const SizedBox(height: 15),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 15),
-                    child: TextFormField(
+                    const SizedBox(height: 15),
+                  TextFormField(
                       controller: email,
                       keyboardType: TextInputType.emailAddress,
                       decoration: const InputDecoration(
@@ -98,11 +101,8 @@ class _SignupState extends State<Signup> {
                         return value!.isEmpty ? 'Please enter email' : null;
                       },
                     ),
-                  ),
-                  const SizedBox(height: 15),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 15),
-                    child: TextFormField(
+                    const SizedBox(height: 15),
+                  TextFormField(
                       controller: password,
                       obscureText: true,
                       decoration: const InputDecoration(
@@ -115,23 +115,24 @@ class _SignupState extends State<Signup> {
                         return value!.isEmpty ? 'Please enter password' : null;
                       },
                     ),
-                  ),
-                  const SizedBox(height: 30),
-                  Padding(padding: const EdgeInsets.symmetric(horizontal:35),
-                  child: MaterialButton(
-                    minWidth: double.infinity,
-                    onPressed:() => signUp(),
-                    color: Colors.pink[100],
-                    textColor: Colors.lightBlue[800],
+                    const SizedBox(height: 30),
+                  
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: () => signUp(),
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                      ),
                     child: const Text('Sign Up'),
                     ),
                   )
+                ]
+          )
+          )
                 ],
               ),
-              ),
-            ),
-        ],
-      ),
-    );
-  }
+      )
+      );
+    }
 }

@@ -30,23 +30,19 @@ class _ForgotState extends State<Forgot> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(title: const Text("Forgot Password"),
       ),
-      body: Column(
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.symmetric(horizontal: 30),
+        child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          const Icon(
-            Icons.book,
-            size: 100,
-            ),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 30),
-            child: Form(
-              child: Column(
-                children: [
-                  Padding(padding: const EdgeInsets.symmetric(vertical: 15),
-                  child: TextFormField(
+          Form(
+            child: Column(
+              children: [
+                const SizedBox(height: 120),
+              TextFormField(
                     controller: email,
                     keyboardType: TextInputType.emailAddress,
                     decoration: const InputDecoration(
@@ -60,24 +56,22 @@ class _ForgotState extends State<Forgot> {
                       return value!.isEmpty ? 'Please enter email' : null;
                     },
                   ),
-                  ),
-                  const SizedBox(height: 15),
-                 
                   const SizedBox(height: 30),
-                  Padding(padding: const EdgeInsets.symmetric(horizontal:35),
-                  child: MaterialButton(
-                    minWidth: double.infinity,
-                    onPressed:(()=>reset()),
-                    color: Colors.pink[100],
-                    textColor: Colors.lightBlue[800],
-                    child: const Text('Send link'),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                    onPressed: () => reset(),
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 16),
                     ),
+                    child: const Text('Reset Password'),
                   )
+                  ),
                 ],
               ),
               ),
+        ]
             ),
-        ],
       ),
     );
   }

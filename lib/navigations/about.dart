@@ -74,11 +74,11 @@ class About extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 10),
-                    Text('• ✍️ Write Daily Entries : Reflect on your day and write freely in your own words.', style: TextStyle(fontSize: settings.fontSize, color: isDark ? Colors.white : Colors.black,)),
-                    Text('• 😊 Express Emotions with Emojis : Choose from a variety of emojis to represent how you felt.', style: TextStyle(fontSize: settings.fontSize, color: isDark ? Colors.white : Colors.black,)),
-                    Text('• 📅 Date Tracking : Each entry is automatically timestamped and organized by date.', style: TextStyle(fontSize: settings.fontSize, color: isDark ? Colors.white : Colors.black,)),
-                    Text('• 🔐 Secure and Private : Your entries are safely stored in the cloud and linked to your account.', style: TextStyle(fontSize: settings.fontSize, color: isDark ? Colors.white : Colors.black,)),
-                    Text('• 🔄 Access Anywhere : Sign in from any device and view your diary from anywhere at any time.', style: TextStyle(fontSize: settings.fontSize, color: isDark ? Colors.white : Colors.black,)),
+                    Text('• 🔐 Easy Sign Up & Login : Create an account securely using your email to start your personal journaling journey.', style: TextStyle(fontSize: settings.fontSize, color: isDark ? Colors.white : Colors.black,)),
+                    Text('• 📝 Write Diary Entries with Emotions : Express your thoughts along with how you feel using emojis. Each entry captures your words and your mood — perfect for reflection.', style: TextStyle(fontSize: settings.fontSize, color: isDark ? Colors.white : Colors.black,)),
+                    Text('• 🎯 Set and Track Your Goals : Use the Goals feature to list your personal objectives and mark them as complete as you grow.', style: TextStyle(fontSize: settings.fontSize, color: isDark ? Colors.white : Colors.black,)),
+                    Text('• 🎨 Customize Appearance : Personalize your writing experience by changing the background color and app theme to match your mood.', style: TextStyle(fontSize: settings.fontSize, color: isDark ? Colors.white : Colors.black,)),
+                    Text('• 🔠 Adjustable Font Size : Make your reading and writing easier by resizing the font based on your comfort.', style: TextStyle(fontSize: settings.fontSize, color: isDark ? Colors.white : Colors.black,)),
                   ],
                 ),
               ),
@@ -91,7 +91,7 @@ class About extends StatelessWidget {
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Text(
-                  'eDiary is designed for simplicity and self-expression, helping you build a healthy habit of reflection and mindfulness.',
+                  'Any feedback or suggestions? We\'d love to hear from you! Please rate and review the app on the App Store or Google Play.',
                   style: TextStyle(
                     fontSize: settings.fontSize,
                     color: isDark ? Colors.white : Colors.black,

@@ -13,104 +13,104 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
-
-  TextEditingController email=TextEditingController();
-  TextEditingController password=TextEditingController();
-
-  bool isloading=false;
+  TextEditingController email = TextEditingController();
+  TextEditingController password = TextEditingController();
+  bool isloading = false;
 
   signIn() async {
     setState(() {
-      isloading=true;
+      isloading = true;
     });
-  try {
-    await FirebaseAuth.instance.signInWithEmailAndPassword(
-      email: email.text.trim(),
-      password: password.text.trim(),
-    );
-  }on FirebaseAuthException catch(e){
-    Get.snackbar("Error", e.code);
-  }catch(e){
-    Get.snackbar("Error", e.toString());
+    try {
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: email.text.trim(),
+        password: password.text.trim(),
+      );
+    } on FirebaseAuthException catch (e) {
+      Get.snackbar("Error", e.code);
+    } catch (e) {
+      Get.snackbar("Error", e.toString());
+    }
+    setState(() {
+      isloading = false;
+    });
   }
-  setState(() {
-    isloading=false;
-  });
-}
-
 
   @override
   Widget build(BuildContext context) {
-    return isloading?const Center(child: Loading(),): Scaffold(
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          const Image(
-            image: AssetImage('assets/images/eDiary_login.png'),
-            height: 200,
-            width: 200,
-            ),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 30),
-            child: Form(
+    final theme = Theme.of(context); // use current theme
+
+    return isloading
+        ? const Center(child: Loading())
+        : Scaffold(
+            backgroundColor: theme.scaffoldBackgroundColor,
+            body: SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 30),
               child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Padding(padding: const EdgeInsets.symmetric(vertical: 15),
-                  child: TextFormField(
-                    controller: email,
-                    keyboardType: TextInputType.emailAddress,
-                    decoration: const InputDecoration(
-                      labelText: 'Email',
-                      hintText: 'Enter Email',
-                      prefixIcon: Icon(Icons.email),
-                      border: OutlineInputBorder(),
+                  const SizedBox(height: 80),
+                  Image.asset(
+                    'assets/images/eDiary_login.png',
+                    height: 200,
+                    width: 200,
+                  ),
+                  const SizedBox(height: 40),
+                  Form(
+                    child: Column(
+                      children: [
+                        TextFormField(
+                          controller: email,
+                          keyboardType: TextInputType.emailAddress,
+                          decoration: InputDecoration(
+                            labelText: 'Email',
+                            hintText: 'Enter Email',
+                            prefixIcon: const Icon(Icons.email),
+                            border: const OutlineInputBorder(),
+                          ),
+                          validator: (value) =>
+                              value!.isEmpty ? 'Please enter email' : null,
+                        ),
+                        const SizedBox(height: 20),
+                        TextFormField(
+                          controller: password,
+                          obscureText: true,
+                          keyboardType: TextInputType.text,
+                          decoration: InputDecoration(
+                            labelText: 'Password',
+                            hintText: 'Enter Password',
+                            prefixIcon: const Icon(Icons.lock),
+                            border: const OutlineInputBorder(),
+                          ),
+                          validator: (value) =>
+                              value!.isEmpty ? 'Please enter password' : null,
+                        ),
+                        const SizedBox(height: 30),
+                        SizedBox(
+                          width: double.infinity,
+                          child: ElevatedButton(
+                            onPressed: signIn,
+                            style: ElevatedButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(vertical: 16),
+                            ),
+                            child: const Text('Login'),
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                        TextButton(
+                          onPressed: () => Get.to(const Signup()),
+                          child: const Text("Register"),
+                        ),
+                        TextButton(
+                          onPressed: () => Get.to(const Forgot()),
+                          child: const Text("Forgot Password"),
+                        ),
+                      ],
                     ),
-                    onChanged: (String value) {},
-                    validator: (value) {
-                      return value!.isEmpty ? 'Please enter email' : null;
-                    },
                   ),
-                  
-                  ),
-                  const SizedBox(height: 15),
-                  Padding(padding: const EdgeInsets.symmetric(vertical: 15),
-                  child: TextFormField(
-                    controller: password,
-                    obscureText: true,
-                    keyboardType: TextInputType.emailAddress,
-                    decoration: const InputDecoration(
-                      labelText: 'Password',
-                      hintText: 'Enter Password',
-                      prefixIcon: Icon(Icons.password),
-                      border: OutlineInputBorder(),
-                    ),
-                    onChanged: (String value) {},
-                    validator: (value) {
-                      return value!.isEmpty ? 'Please enter password' : null;
-                    },
-                  ),
-                  ),
-                  const SizedBox(height: 30),
-                  Padding(padding: const EdgeInsets.symmetric(horizontal:35),
-                  child: MaterialButton(
-                    minWidth: double.infinity,
-                    onPressed:(()=>signIn()),
-                    color: Colors.white,
-                    textColor: Colors.black,
-                    child: const Text('Login'),
-                    ),
-                  ),
-                  const SizedBox(height: 30,),
-                  ElevatedButton(onPressed: (()=>Get.to(const Signup())), child: const Text("Register")),
-                  const SizedBox(height: 30,),
-                  ElevatedButton(onPressed: (()=>Get.to(const Forgot())), child: const Text("Forgot Password")),
                 ],
               ),
-              ),
             ),
-        ],
-      ),
-    );
+          );
   }
 }

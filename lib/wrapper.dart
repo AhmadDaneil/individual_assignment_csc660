@@ -41,23 +41,22 @@ Future<void> _loadUserSettings() async {
 
 @override
 Widget build(BuildContext context) {
-
-    
-    return StreamBuilder<User?>(
-        stream: FirebaseAuth.instance.authStateChanges(), 
-        builder: (context,snapshot){
-          if(snapshot.connectionState == ConnectionState.waiting){
-            return const Loading();
-          } else if (snapshot.hasData) {
-            if (snapshot.data!.emailVerified){
-              return const HomePage();
-            }else{
-              return const Verify();
-            }
-          }else{
-            return const Login();
-          }
+  return StreamBuilder<User?>(
+    stream: FirebaseAuth.instance.authStateChanges(),
+    builder: (context, snapshot) {
+      if (snapshot.connectionState == ConnectionState.waiting) {
+        return const Loading();
+      } else if (snapshot.hasData) {
+        if (snapshot.data!.emailVerified) {
+          return const HomePage();
+        } else {
+          return const Verify();
         }
-    );
-  }
+      } else {
+        return const Login();
+      }
+    },
+  );
+}
+
 }

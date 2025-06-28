@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:provider/provider.dart';
+import 'package:get/get.dart';
 
 import 'homepage.dart';
 import 'writediary.dart';
@@ -11,6 +12,7 @@ import 'goals/goalcreate.dart';
 import 'goals/goalview.dart';
 import 'package:individual_assignment/navigations/settings/settings_provider.dart';
 import 'login.dart';
+import 'signup.dart';
 import 'forgot.dart';
 
 
@@ -32,7 +34,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<SettingsProvider>(
       builder: (context, settings, _) {
-        return MaterialApp(
+        return GetMaterialApp(
   debugShowCheckedModeBanner: false,
   themeMode: settings.isDarkMode ? ThemeMode.dark : ThemeMode.light,
   theme: ThemeData(
@@ -66,9 +68,10 @@ darkTheme: ThemeData.dark().copyWith(
       '/about': (context) => const About(),
       '/goalcreate': (context) => const Goalcreate(),
       '/goalview': (context) => Goalsview(),
+      '/signup': (context) => const Signup(),
+      },
+        );
     },
-  );
-  }
   );
   }
 }
