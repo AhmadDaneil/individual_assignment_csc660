@@ -7,6 +7,7 @@ import 'dart:io';
 import 'dart:convert';
 import 'package:individual_assignment/app_colors.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -16,7 +17,11 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final user = FirebaseAuth.instance.currentUser;
+
+  Future<void> _handleRefresh() async {
+    setState(() {});
+    await Future.delayed(const Duration(milliseconds: 500));
+  }
 
   signout() async {
     await FirebaseAuth.instance.signOut();
@@ -69,6 +74,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final user = FirebaseAuth.instance.currentUser;
     final String? uid = FirebaseAuth.instance.currentUser?.uid;
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
@@ -108,84 +114,112 @@ class _HomePageState extends State<HomePage> {
             return const Center(child: Text('No diary entries found.'));
           }
 
-          return ListView.builder(
-            itemCount: docs.length,
-            itemBuilder: (context, index) {
-              final data = docs[index];
-              final entryText = data['entry'];
-              final emoji = data['emotion'] ?? '📝';
-              final timestamp = data['timestamp'] as Timestamp?;
-              final date = timestamp?.toDate() ?? DateTime.now();
+          return LiquidPullToRefresh(
+  onRefresh: _handleRefresh,
+  color: Colors.purple,
+  height: 120,
+  animSpeedFactor: 2,
+  backgroundColor: Colors.white,
+  showChildOpacityTransition: false,
+  child: ListView.builder(
+    itemCount: docs.length,
+    itemBuilder: (context, index) {
+      final data = docs[index];
+      final entryText = data['entry'];
+      final emoji = data['emotion'] ?? '📝';
+      final timestamp = data['timestamp'] as Timestamp?;
+      final date = timestamp?.toDate() ?? DateTime.now();
 
-              return Card(
-                color: isDark ? AppColors.darkCard : AppColors.lightCard,
-                margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
-                child: ExpandablePanel(
-                  header: ListTile(
-                    leading: Text(emoji, style: TextStyle(fontSize: 28, color: isDark ? AppColors.darkText : AppColors.lightText)),
-                    title: Text(
-                      '${date.day}/${date.month}/${date.year}',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: isDark ? AppColors.darkText : AppColors.lightText,
-                      ),
-                    ),
-                  ),
-                  collapsed: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(
-                      entryText,
-                      softWrap: true,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(color: isDark ? AppColors.darkText : AppColors.lightText),
-                    ),
-                  ),
-                  expanded: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(entryText, style: TextStyle(color: isDark ? AppColors.darkText : AppColors.lightText)),
-                        const SizedBox(height: 10),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            IconButton(
-                              icon: const Icon(Icons.edit, color: Colors.blue),
-                              onPressed: () {
-                                _showEditDialog(context, data.id, entryText, emoji);
-                              },
-                            ),
-                            IconButton(
-                              icon: const Icon(Icons.delete, color: Colors.red),
-                              onPressed: () async {
-                              final deletedData = data.data(); // Save data
-                              await FirebaseFirestore.instance.collection('diary').doc(data.id).delete();
-
-                              ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                              content: Text('Entry deleted'),
-                              action: SnackBarAction(
-                              label: 'Undo',
-                              onPressed: () async {
-                              await FirebaseFirestore.instance.collection('diary').doc(data.id).set(deletedData as Map<String, dynamic>);
-                              },
-                              ),
-                              duration: const Duration(seconds: 5),
-                              ),
-                              );
-                            },
-                          ),
-                        ],
-                        ),
-                      ],
-                    ),
+      return Card(
+        color: isDark ? AppColors.darkCard : AppColors.lightCard,
+        margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
+        child: ExpandablePanel(
+          header: ListTile(
+            leading: Text(
+              emoji,
+              style: TextStyle(
+                fontSize: 28,
+                color: isDark ? AppColors.darkText : AppColors.lightText,
+              ),
+            ),
+            title: Text(
+              '${date.day}/${date.month}/${date.year}',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: isDark ? AppColors.darkText : AppColors.lightText,
+              ),
+            ),
+          ),
+          collapsed: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(
+              entryText,
+              softWrap: true,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                color: isDark ? AppColors.darkText : AppColors.lightText,
+              ),
+            ),
+          ),
+          expanded: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  entryText,
+                  style: TextStyle(
+                    color: isDark ? AppColors.darkText : AppColors.lightText,
                   ),
                 ),
-              );
-            },
-          );
+                const SizedBox(height: 10),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    IconButton(
+                      icon: const Icon(Icons.edit, color: Colors.blue),
+                      onPressed: () {
+                        _showEditDialog(context, data.id, entryText, emoji);
+                      },
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.delete, color: Colors.red),
+                      onPressed: () async {
+                        final deletedData = data.data();
+                        await FirebaseFirestore.instance
+                            .collection('diary')
+                            .doc(data.id)
+                            .delete();
+
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: const Text('Entry deleted'),
+                            action: SnackBarAction(
+                              label: 'Undo',
+                              onPressed: () async {
+                                await FirebaseFirestore.instance
+                                    .collection('diary')
+                                    .doc(data.id)
+                                    .set(deletedData as Map<String, dynamic>);
+                              },
+                            ),
+                            duration: const Duration(seconds: 5),
+                          ),
+                        );
+                      },
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    },
+  ),
+);
+
         },
       ),
       floatingActionButton: FloatingActionButton(
