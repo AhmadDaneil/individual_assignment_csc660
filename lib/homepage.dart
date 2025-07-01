@@ -3,11 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:expandable/expandable.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:individual_assignment/login.dart';
 import 'dart:io';
 import 'dart:convert';
 import 'package:individual_assignment/app_colors.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
+import 'package:individual_assignment/navigations/settings/settings_provider.dart';
+import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -17,6 +20,28 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+
+  @override
+void initState() {
+  super.initState();
+  _loadSettings();
+}
+
+void _loadSettings() async {
+  final user = FirebaseAuth.instance.currentUser;
+  if (user != null) {
+    final doc = await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
+    if (doc.exists) {
+      final data = doc.data();
+      if (data != null) {
+        // Load settings into provider
+        Provider.of<SettingsProvider>(context, listen: false).loadFromMap(data);
+      }
+    }
+  }
+}
+
+
 
   Future<void> _handleRefresh() async {
     setState(() {});
@@ -74,6 +99,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
 Widget build(BuildContext context) {
+  final settings = Provider.of<SettingsProvider>(context);
   final theme = Theme.of(context);
   final isDark = theme.brightness == Brightness.dark;
 
@@ -99,6 +125,7 @@ Widget build(BuildContext context) {
       return Scaffold(
         appBar: AppBar(
           title: const Text('Home Page'),
+          backgroundColor: settings.appBarColor,
         ),
         drawer: NavigationDrawer(user: user),
         body: StreamBuilder<QuerySnapshot>(
@@ -258,6 +285,9 @@ class NavigationDrawer extends StatefulWidget {
 class _NavigationDrawerState extends State<NavigationDrawer> {
   Future<void> signout() async {
     await FirebaseAuth.instance.signOut();
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(builder: (context) => const Login()),
+    );
   }
 
   Future<void> _pickAndUploadImage(BuildContext context) async {
@@ -321,7 +351,7 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
       );
 
   Widget buildHeader(BuildContext context, String name, String email, ImageProvider imageProvider) => Material(
-        color: Colors.pink[100],
+        color: Colors.white,
         child: InkWell(
           onTap: () => _pickAndUploadImage(context),
           splashColor: Colors.white,
