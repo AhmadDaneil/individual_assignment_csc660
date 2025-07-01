@@ -40,19 +40,15 @@ void updateAppBarColor(Color color) {
   }
 
   void loadFromMap(Map<String, dynamic> data) {
-    _isDarkMode = data['darkMode'] ?? false;
-    _fontSize = (data['fontSize'] ?? 16).toDouble();
-    _backgroundColor = Color(data['backgroundColor'] ?? Colors.white.value);
-    _appBarColor = Color(data['appBarColor'] ?? Colors.pink.value);
-    _themeColor = _materialColorFromInt(data['themeColor']) ?? Colors.pink;
-    if (data.containsKey('backgroundColor')) {
-    _backgroundColor = Color(data['backgroundColor']);
-  }
-  if (data.containsKey('appBarColor')) {
-    _appBarColor = Color(data['appBarColor']);
-  }
+  _isDarkMode = data['darkMode'] ?? false;
+  _fontSize = (data['fontSize'] ?? 16).toDouble();
+  _backgroundColor = Color(data['backgroundColor'] ?? Colors.white.value);
+  _appBarColor = Color(data['appBarColor'] ?? Colors.pink.value);
+  _themeColor = _materialColorFromInt(data['themeColor']) ?? Colors.pink;
+
   notifyListeners();
-  }
+}
+
 
   Map<String, dynamic> toMap() {
     return {

@@ -53,49 +53,76 @@ void _loadSettings() async {
   }
 
   void _showEditDialog(BuildContext context, String docId, String currentEntry, String currentEmoji) {
-    final TextEditingController entryController = TextEditingController(text: currentEntry);
-    final TextEditingController emojiController = TextEditingController(text: currentEmoji);
+  final TextEditingController entryController = TextEditingController(text: currentEntry);
+  final TextEditingController emojiController = TextEditingController(text: currentEmoji);
+  final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text('Edit Entry'),
-          content: SingleChildScrollView(
-            child: Column(
-              children: [
-                TextField(
-                  controller: emojiController,
-                  decoration: const InputDecoration(labelText: 'Emoji'),
+  showDialog(
+    context: context,
+    builder: (context) {
+      return AlertDialog(
+        backgroundColor: isDark ? Colors.grey[900] : Colors.white,
+        title: Text(
+          'Edit Entry',
+          style: TextStyle(color: isDark ? Colors.white : Colors.black),
+        ),
+        content: SingleChildScrollView(
+          child: Column(
+            children: [
+              TextField(
+                controller: emojiController,
+                decoration: InputDecoration(
+                  labelText: 'Emoji',
+                  labelStyle: TextStyle(color: isDark ? Colors.white70 : Colors.black),
+                  enabledBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: isDark ? Colors.white54 : Colors.black45),
+                  ),
+                  focusedBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: isDark ? Colors.purpleAccent : Colors.purple),
+                  ),
                 ),
-                TextField(
-                  controller: entryController,
-                  maxLines: 4,
-                  decoration: const InputDecoration(labelText: 'Entry'),
+                style: TextStyle(color: isDark ? Colors.white : Colors.black),
+              ),
+              const SizedBox(height: 10),
+              TextField(
+                controller: entryController,
+                maxLines: 4,
+                decoration: InputDecoration(
+                  labelText: 'Entry',
+                  labelStyle: TextStyle(color: isDark ? Colors.white70 : Colors.black),
+                  enabledBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: isDark ? Colors.white54 : Colors.black45),
+                  ),
+                  focusedBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: isDark ? Colors.purpleAccent : Colors.purple),
+                  ),
                 ),
-              ],
-            ),
+                style: TextStyle(color: isDark ? Colors.white : Colors.black),
+              ),
+            ],
           ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('Cancel'),
-            ),
-            ElevatedButton(
-              onPressed: () async {
-                await FirebaseFirestore.instance.collection('diary').doc(docId).update({
-                  'entry': entryController.text.trim(),
-                  'emotion': emojiController.text.trim(),
-                });
-                Navigator.pop(context);
-              },
-              child: const Text('Save'),
-            ),
-          ],
-        );
-      },
-    );
-  }
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text('Cancel', style: TextStyle(color: isDark ? Colors.white70 : Colors.black)),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              await FirebaseFirestore.instance.collection('diary').doc(docId).update({
+                'entry': entryController.text.trim(),
+                'emotion': emojiController.text.trim(),
+              });
+              Navigator.pop(context);
+            },
+            child: const Text('Save'),
+          ),
+        ],
+      );
+    },
+  );
+}
+
 
   @override
 Widget build(BuildContext context) {

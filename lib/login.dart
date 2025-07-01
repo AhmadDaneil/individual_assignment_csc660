@@ -18,23 +18,31 @@ class _LoginState extends State<Login> {
   bool isloading = false;
 
   signIn() async {
-    setState(() {
-      isloading = true;
-    });
-    try {
-      await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: email.text.trim(),
-        password: password.text.trim(),
-      );
-    } on FirebaseAuthException catch (e) {
-      Get.snackbar("Error", e.code);
-    } catch (e) {
-      Get.snackbar("Error", e.toString());
+  setState(() {
+    isloading = true;
+  });
+
+  try {
+    await FirebaseAuth.instance.signInWithEmailAndPassword(
+      email: email.text.trim(),
+      password: password.text.trim(),
+    );
+
+    // ✅ Navigate to home page
+    if (context.mounted) {
+      Navigator.pushReplacementNamed(context, '/home');
     }
-    setState(() {
-      isloading = false;
-    });
+  } on FirebaseAuthException catch (e) {
+    Get.snackbar("Error", e.message ?? e.code);
+  } catch (e) {
+    Get.snackbar("Error", e.toString());
   }
+
+  setState(() {
+    isloading = false;
+  });
+}
+
 
   @override
   Widget build(BuildContext context) {

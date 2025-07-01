@@ -16,7 +16,7 @@ class _WritediaryState extends State<Writediary> {
   final User? user = FirebaseAuth.instance.currentUser;
 
   String? _selectedEmoji;
-  List<String> emojis = ['😊', '😢', '😡', '😴', '😐'];
+  List<String> emojis = ['😊', '😢', '😡', '😴', '😐', '😍','😂','🤪','😰','😱','🥵','🥶'];
 
   @override
   void dispose() {

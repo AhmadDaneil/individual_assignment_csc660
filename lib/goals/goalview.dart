@@ -98,22 +98,36 @@ class _GoalsviewState extends State<Goalsview> {
                       ),
                     );
                   },
-                  child: ListTile(
-                    title: Text(
-                      data['title'],
-                      style: TextStyle(
-                          decoration: isCompleted
-                              ? TextDecoration.lineThrough
-                              : null),
-                    ),
-                    subtitle: Text(data['description']),
-                    trailing: Checkbox(
-                      value: isCompleted,
-                      onChanged: (val) {
-                        data.reference.update({'isCompleted': val});
-                      },
-                    ),
-                  ),
+                  child: Padding(
+  padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 6.0),
+  child: Card(
+    elevation: 3,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(12),
+    ),
+    child: ListTile(
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      title: Text(
+        data['title'],
+        style: TextStyle(
+          fontWeight: FontWeight.bold,
+          decoration: isCompleted ? TextDecoration.lineThrough : null,
+        ),
+      ),
+      subtitle: Padding(
+        padding: const EdgeInsets.only(top: 6.0),
+        child: Text(data['description']),
+      ),
+      trailing: Checkbox(
+        value: isCompleted,
+        onChanged: (val) {
+          data.reference.update({'isCompleted': val});
+        },
+      ),
+    ),
+  ),
+),
+
                 );
               },
             ),
