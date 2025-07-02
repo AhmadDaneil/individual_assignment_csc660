@@ -4,6 +4,7 @@ import 'package:individual_assignment/forgot.dart';
 import 'package:individual_assignment/signup.dart';
 import 'package:get/get.dart';
 import 'package:individual_assignment/loading.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -42,6 +43,18 @@ class _LoginState extends State<Login> {
     isloading = false;
   });
 }
+
+  signInWithGoogle() async{
+    final GoogleSignInAccount? gUser = await GoogleSignIn().signIn();
+
+    final GoogleSignInAuthentication gAuth = await gUser!.authentication;
+
+    final credential = GoogleAuthProvider.credential(
+      accessToken: gAuth.accessToken,
+      idToken: gAuth.idToken,
+    );
+    return await FirebaseAuth.instance.signInWithCredential(credential);
+  }
 
 
   @override
@@ -113,6 +126,27 @@ class _LoginState extends State<Login> {
                           onPressed: () => Get.to(const Forgot()),
                           child: const Text("Forgot Password"),
                         ),
+                        SizedBox(height: 40,
+                        width:300,
+                        child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                        Container(
+                        // decoration: BoxDecoration(color: Colors.blue),
+                        child:
+                        Image.network(
+                        'http://pngimg.com/uploads/google/google_PNG19635.png',
+                        fit:BoxFit.cover
+                        )                  
+                        ),
+                        SizedBox(
+                        width: 5.0,
+                        ),
+                        Text('Sign-in with Google')
+                        ],
+                        ),
+                        )
                       ],
                     ),
                   ),
