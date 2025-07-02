@@ -182,7 +182,6 @@ Widget build(BuildContext context) {
             return LiquidPullToRefresh(
               onRefresh: _handleRefresh,
               color: Colors.purple,
-              height: 120,
               animSpeedFactor: 2,
               backgroundColor: Colors.white,
               showChildOpacityTransition: false,

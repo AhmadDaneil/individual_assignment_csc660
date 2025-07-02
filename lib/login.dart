@@ -126,27 +126,35 @@ class _LoginState extends State<Login> {
                           onPressed: () => Get.to(const Forgot()),
                           child: const Text("Forgot Password"),
                         ),
-                        SizedBox(height: 40,
-                        width:300,
-                        child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        mainAxisSize: MainAxisSize.min,
-                        children: <Widget>[
-                        Container(
-                        // decoration: BoxDecoration(color: Colors.blue),
-                        child:
-                        Image.network(
-                        'http://pngimg.com/uploads/google/google_PNG19635.png',
-                        fit:BoxFit.cover
-                        )                  
-                        ),
                         SizedBox(
-                        width: 5.0,
+                        height: 40,
+                        width: 300,
+                        child: GestureDetector(
+                          onTap: () async {
+                            final user = await signInWithGoogle();
+                            if (user != null && context.mounted) {
+                              Navigator.pushReplacementNamed(context, '/home');
+                            }
+                          },
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Image.network(
+                                'http://pngimg.com/uploads/google/google_PNG19635.png',
+                                height: 24,
+                                width: 24,
+                                fit: BoxFit.cover,
+                              ),
+                              const SizedBox(width: 10),
+                              const Text(
+                                'Sign in with Google',
+                                style: TextStyle(fontSize: 16),
+                              ),
+                            ],
+                          ),
                         ),
-                        Text('Sign-in with Google')
-                        ],
-                        ),
-                        )
+                      ),
+
                       ],
                     ),
                   ),
