@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+//Firebase setup
 import 'package:firebase_core/firebase_core.dart';
+//State management
 import 'package:provider/provider.dart';
+//Routing and UI notifications(snackbar)
 import 'package:get/get.dart';
 
 import 'homepage.dart';
@@ -18,10 +21,12 @@ import 'forgot.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  //To prepare Firebase services before the app runs.
   await Firebase.initializeApp();
 
   runApp(
     ChangeNotifierProvider(
+      //Available globally
       create: (_) => SettingsProvider(),
       child: const MyApp(),
     ),
@@ -32,8 +37,10 @@ class MyApp extends StatelessWidget {
   const MyApp({super.key});
   @override
   Widget build(BuildContext context) {
+    //Manages user preferences
     return Consumer<SettingsProvider>(
       builder: (context, settings, _) {
+        //For improved navigation and snackbar support.
         return GetMaterialApp(
   debugShowCheckedModeBanner: false,
   themeMode: settings.isDarkMode ? ThemeMode.dark : ThemeMode.light,
@@ -57,7 +64,9 @@ darkTheme: ThemeData.dark().copyWith(
     fontSizeFactor: settings.fontSize / 16.0,
   ),
 ),
+      //Checking login state
       initialRoute: '/wrapper',
+      //Defines all routes of apps
       routes: {
       '/home': (context) => const HomePage(),
       '/login': (context) => const Login(),

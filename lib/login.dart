@@ -24,6 +24,7 @@ class _LoginState extends State<Login> {
   });
 
   try {
+    //Allows users to log in securely using their registered email and password via Firebase Authentication.
     await FirebaseAuth.instance.signInWithEmailAndPassword(
       email: email.text.trim(),
       password: password.text.trim(),
@@ -43,7 +44,7 @@ class _LoginState extends State<Login> {
     isloading = false;
   });
 }
-
+  //Provide a way 
   signInWithGoogle() async{
     final GoogleSignInAccount? gUser = await GoogleSignIn().signIn();
 

@@ -14,18 +14,32 @@ class _ForgotState extends State<Forgot> {
   
   reset() async {
   try {
-    await FirebaseAuth.instance.sendPasswordResetEmail(email: email.text);(
+    await FirebaseAuth.instance.sendPasswordResetEmail(
       email: email.text.trim(),
-      
     );
-  } catch (e) {
-    if(!mounted)return;
+
+    if (!mounted) return;
+
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Login failed: $e')),
+      const SnackBar(
+        content: Text('A password reset link has been sent to your email'),
+      ),
     );
-    
+
+    // Wait for a moment so user can see the snackbar
+    await Future.delayed(const Duration(seconds: 1));
+
+    // Go back to login page
+    Navigator.pop(context);
+  } catch (e) {
+    if (!mounted) return;
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Error: $e')),
+    );
   }
-  }
+}
+
 
   @override
   Widget build(BuildContext context) {

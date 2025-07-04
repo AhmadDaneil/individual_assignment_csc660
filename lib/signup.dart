@@ -37,19 +37,34 @@ class _SignupState extends State<Signup> {
         'uid': user.uid,
       });
 
-      // Optional: update Firebase display name
+      // Update display name (optional)
       await user.updateDisplayName(name.text.trim());
 
       // Send email verification
       await user.sendEmailVerification();
 
-      // Navigate to verification page
+      // Show snackbar to notify user
+      Get.snackbar(
+        'Verify Email',
+        'A verification link has been sent to your email.',
+        snackPosition: SnackPosition.BOTTOM,
+        margin: const EdgeInsets.all(20),
+        backgroundColor: Colors.green[100],
+        colorText: Colors.black,
+      );
+
+      // Navigate to verify email page
       Get.to(() => const Verify());
     }
   } catch (e) {
-    Get.snackbar('Signup Error', e.toString());
+    Get.snackbar('Signup Error', e.toString(),
+      snackPosition: SnackPosition.BOTTOM,
+      backgroundColor: Colors.red[100],
+      colorText: Colors.black,
+    );
   }
 }
+
 
 
   @override
