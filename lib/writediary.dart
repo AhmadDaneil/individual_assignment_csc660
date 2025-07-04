@@ -25,32 +25,42 @@ class _WritediaryState extends State<Writediary> {
   }
 
   Future<void> _saveEntry() async {
-    String entry = _textController.text.trim();
-    if (entry.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please write something')),
-      );
-      return;
-    }
-
-    try {
-      await FirebaseFirestore.instance.collection('diary').add({
-        'entry': entry,
-        'timestamp': DateTime.now(),
-        'user_id': user?.uid,
-        'emotion': _selectedEmoji ?? '📝',
-      });
-      _textController.clear();
-      setState(() {
-        _selectedEmoji = null;
-      });
-      if (context.mounted) Navigator.pop(context);
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error saving entry: $e')),
-      );
-    }
+  String entry = _textController.text.trim();
+  if (entry.isEmpty) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Please write something')),
+    );
+    return;
   }
+
+  try {
+    await FirebaseFirestore.instance.collection('diary').add({
+      'entry': entry,
+      'timestamp': DateTime.now(),
+      'user_id': user?.uid,
+      'emotion': _selectedEmoji ?? '📝',
+    });
+
+    _textController.clear();
+    setState(() {
+      _selectedEmoji = null;
+    });
+
+    if (context.mounted) {
+      Navigator.pop(context); // Go back to homepage
+
+      // Show snackbar after navigating back
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Diary saved successfully')),
+      );
+    }
+  } catch (e) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Error saving entry: $e')),
+    );
+  }
+}
+
 
   @override
   Widget build(BuildContext context) {

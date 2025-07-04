@@ -30,7 +30,13 @@ class _AddGoalCreateScreenState extends State<Goalcreate> {
       'createdAt': Timestamp.now(),
     });
 
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Goal saved successfully')),
+    );
+
+    if (context.mounted) {
     Navigator.pop(context);
+    }
   }
 
   Future<void> _pickDate() async {
